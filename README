@@ -1,0 +1,43 @@
+NAME
+    MasonX::LeakGuard::Object - report memory leaks (objects) per request
+
+SYNOPSIS
+        use MasonX::LeakGuard::Object;
+        %MasonX::LeakGuard::Object::OPTIONS = (
+            exclude => [
+                'utf8',
+                'HTML::Mason::*',
+                'Devel::StackTrace',
+            ],
+        );
+        my @MasonParameters = (
+            ...
+            plugins => [qw(MasonX::LeakGuard::Object)],
+        );
+
+DESCRIPTION
+    This is plugin for HTML::Mason applications that helps you find memory
+    leaks in OO applications. It uses Devel::LeakGuard::Object framework for
+    that.
+
+    Leaks are reported using perl's "warn" function. Report is very simple,
+    shows request path, arguments (using Data::Dumper) and counts of objects
+    that leaked with groupping by class.
+
+    It's possible that false positives to be reported, for example if a
+    compontent has ONCE block where you cache some values. Most caches will
+    generate false positive reports, but it's possible to use options of
+    function leakguard in Devel::LeakGuard::Object. Look at "SYNOPSIS" for
+    details.
+
+    To avoid many false positives the module as well ignores first request
+    to a path.
+
+AUTHOR
+    Ruslan Zakirov <ruz@bestpractical.com>
+
+LICENSE
+    Under the same terms as perl itself.
+
+    -cut
+
