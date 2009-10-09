@@ -16,22 +16,54 @@ SYNOPSIS
         );
 
 DESCRIPTION
-    This is plugin for HTML::Mason applications that helps you find memory
-    leaks in OO applications. It uses Devel::LeakGuard::Object framework for
+    This is plugin for HTML::Mason based applications that helps you find
+    memory leaks in OO code. It uses Devel::LeakGuard::Object framework for
     that.
 
-    Leaks are reported using perl's "warn" function. Report is very simple,
-    shows request path, arguments (using Data::Dumper) and counts of objects
-    that leaked with groupping by class.
+OPTIONS
+    It's possible to use all options leakguard function in
+    Devel::LeakGuard::Object supports. Look at "SYNOPSIS" for example.
 
-    It's possible that false positives to be reported, for example if a
-    compontent has ONCE block where you cache some values. Most caches will
-    generate false positive reports, but it's possible to use options of
-    function leakguard in Devel::LeakGuard::Object. Look at "SYNOPSIS" for
-    details.
+  on_leak
+    on_leak option can be used to customize report or redirect to custom
+    log, for example:
+
+        %MasonX::LeakGuard::Object::OPTIONS = (
+            on_leak => sub {
+                my ($report, %args) = @_;
+                MyApp->logger->error( $args{'message'} );
+            },
+        );
+
+    First argument is the report structure (read more on it in
+    Devel::LeakGuard::Object). To make life easier more data is passed into
+    your function as a hash. The hash contains:
+
+    formatted - formatted report, a text table.
+    message - formatted default message containg description, request path,
+    request arguments and report. For example:
+            Leak(s) found after request to '/index.html' with $ARGS1 = [
+                       'argument',
+                       'value',
+                     ];
+            Leaked objects:
+              Class          Before  After  Delta
+              MyApp::Class        0      1      1
+
+    path - request path.
+    arguments - request arguments, array reference.
+
+FALSE POSITIVES
+    It's possible that false positives are reported, for example if a
+    compontent has ONCE block where you cache some values on first request.
+    Most caches will generate false positive reports, but it's possible to
+    use options of function leakguard in Devel::LeakGuard::Object. Look at
+    "SYNOPSIS" for example and "OPTIONS" for additional details.
 
     To avoid many false positives the module as well ignores first request
     to a path.
+
+    Sure it doesn't protect you from all cases.
 
 AUTHOR
     Ruslan Zakirov <ruz@bestpractical.com>
