@@ -1,0 +1,8 @@
+0.02 2009-10-10
+
+    * better on_leak handling and report message
+    * more docs
+
+0.01
+    
+    * initial release
