@@ -9,6 +9,9 @@ SYNOPSIS
                 'HTML::Mason::*',
                 'Devel::StackTrace',
             ],
+            hide_arguments => [
+                'pass', 'password',
+            ],
         );
         my @MasonParameters = (
             ...
@@ -23,6 +26,8 @@ DESCRIPTION
 OPTIONS
     It's possible to use all options leakguard function in
     Devel::LeakGuard::Object supports. Look at "SYNOPSIS" for example.
+
+    Some additional options are supported.
 
   on_leak
     on_leak option can be used to customize report or redirect to custom
@@ -52,6 +57,16 @@ OPTIONS
 
     path - request path.
     arguments - request arguments, array reference.
+
+  hide_arguments
+    It's possible to specify list of arguments names to hide from reports,
+    for example:
+
+        %MasonX::LeakGuard::Object::OPTIONS = (
+            hide_arguments => [
+                'pass', 'password',
+            ],
+        );
 
 FALSE POSITIVES
     It's possible that false positives are reported, for example if a

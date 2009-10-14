@@ -20,7 +20,8 @@ no_index:
 requires:
   Data::Dumper: 0
   Devel::LeakGuard::Object: 0
+  HTML::Mason::Plugin: 0
   perl: 5.8.0
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.02
+version: 0.03

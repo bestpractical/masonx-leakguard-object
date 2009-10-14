@@ -1,3 +1,7 @@
+0.03 2009-10-14
+
+    * hide_arguments option
+
 0.02 2009-10-10
 
     * better on_leak handling and report message
