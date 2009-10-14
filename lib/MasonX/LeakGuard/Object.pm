@@ -28,6 +28,9 @@ MasonX::LeakGuard::Object - report memory leaks (objects) per request
             'HTML::Mason::*',
             'Devel::StackTrace',
         ],
+        hide_arguments => [
+            'pass', 'password',
+        ],
     );
     my @MasonParameters = (
         ...
@@ -44,6 +47,8 @@ framework for that.
 
 It's possible to use all options leakguard function in
 L<Devel::LeakGuard::Object> supports. Look at L</SYNOPSIS> for example.
+
+Some additional options are supported.
 
 =head2 on_leak
 
@@ -82,6 +87,17 @@ request path, request arguments and report. For example:
 
 =back
 
+=head2 hide_arguments
+
+It's possible to specify list of arguments names to hide from
+reports, for example:
+
+    %MasonX::LeakGuard::Object::OPTIONS = (
+        hide_arguments => [
+            'pass', 'password',
+        ],
+    );
+
 =head1 FALSE POSITIVES
 
 It's possible that false positives are reported, for example if
@@ -112,6 +128,15 @@ sub start_request_hook {
         my $formatted = Devel::LeakGuard::Object::State->_fmt_report(
             $report
         );
+        if ( my $hide = $OPTIONS{'hide_arguments'} ) {
+            foreach ( my $i = 0; $i < @request_args; $i+=2 ) {
+                my $name = $request_args[$i];
+                next unless grep $name eq $_, @$hide;
+
+                splice @request_args, $i, 2;
+                $i -= 2;
+            }
+        }
         local $Data::Dumper::Varname = 'ARGS';
         my $msg =
             "Leak(s) found after request to '$path'"
@@ -148,7 +173,10 @@ sub start_request_hook {
     }
 
     $self->{'state'} = Devel::LeakGuard::Object::State->new(
-        %OPTIONS, on_leak => $leak_handler,
+        only    => $OPTIONS{'only'},
+        exclude => $OPTIONS{'exclude'},
+        expect  => $OPTIONS{'expect'},
+        on_leak => $leak_handler,
     );
 }
 
